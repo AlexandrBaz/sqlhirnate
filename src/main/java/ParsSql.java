@@ -3,6 +3,7 @@ import entity.Student;
 import entity.Subscription;
 import entity.Teacher;
 import enums.CourseType;
+import keys.SubscriptionKey;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -82,6 +83,7 @@ public class ParsSql {
             String[] fields = data.split(",");
             session.getTransaction().begin();
             Subscription subscription = new Subscription();
+            subscription.setId(new SubscriptionKey(Integer.parseInt(fields[0]), Integer.parseInt(fields[1])));
             subscription.setStudentId(Integer.parseInt(fields[0]));
             subscription.setCoursedId(Integer.parseInt(fields[1]));
             Date date = format.parse(fields[2]);
