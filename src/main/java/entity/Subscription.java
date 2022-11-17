@@ -18,15 +18,15 @@ public class Subscription {
     @Column(name = "course_id", insertable = false, updatable = false)
     private int coursedId;
 
-//    @ManyToOne
-//    @MapsId("courseId")
-//    @JoinColumn(name = "course_id")
-//    Course course;
-//
-//    @ManyToOne
-//    @MapsId("studentId")
-//    @JoinColumn(name = "student_id")
-//    Student student;
+    @ManyToOne
+    @MapsId("courseId")
+    @JoinColumn(name = "course_id")
+    Course course;
+
+    @ManyToOne
+    @MapsId("studentId")
+    @JoinColumn(name = "student_id")
+    Student student;
 
     @Column(name = "subscription_date")
     private Date subscriptionDate;
@@ -55,21 +55,21 @@ public class Subscription {
         this.coursedId = coursedId;
     }
 
-//    public Course getCourse() {
-//        return course;
-//    }
-//
-//    public void setCourse(Course course) {
-//        this.course = course;
-//    }
-//
-//    public Student getStudent() {
-//        return student;
-//    }
-//
-//    public void setStudent(Student student) {
-//        this.student = student;
-//    }
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
 
     public Date getSubscriptionDate() {
         return subscriptionDate;

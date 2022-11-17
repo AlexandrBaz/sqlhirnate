@@ -1,6 +1,7 @@
 package entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Courses")
@@ -17,23 +18,35 @@ public class Course {
     @Enumerated(EnumType.STRING)
     private enums.CourseType type;
 
-    @Column(length = 500)
+    @Column(length = 500, nullable = false)
     private String description;
 
-    @Column(name = "teacher_id")
-    private int teacherId;
+    @Column(name = "teacher_id", nullable = false)
+    private Integer teacherId;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @MapsId("teacherId")
     private Teacher teacher;
 
-    @Column(name = "students_counts")
-    private int studentsCount;
+    @Column(name = "students_counts", nullable = false)
+    private Integer studentsCount;
 
-    private int price;
+    private Integer price;
 
     @Column(name = "price_per_hour")
-    private float pricePerHour;
+    private Float pricePerHour;
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
+    }
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "Subscriptions", joinColumns = {@JoinColumn(name = "course_id")}, inverseJoinColumns = {@JoinColumn(name = "student_id")})
+    private List<Student> students;
 
     public int getId() {
         return id;

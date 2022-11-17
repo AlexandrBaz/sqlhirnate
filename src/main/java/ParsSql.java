@@ -19,40 +19,44 @@ import java.util.List;
 import java.util.Locale;
 
 public class ParsSql {
+    static Session session = HibernateUtil.getSessionFactory().openSession();
 
+        public static void parseSql(String uri) throws IOException, ParseException {
 
-    public static void parseSql(String uri) throws IOException, ParseException {
         List<String> lines = Files.readAllLines(Paths.get(uri));
         for (String line : lines) {
             if (line.contains("INSERT INTO `Courses`")) {
-                String clearData = line.replaceAll("INSERT INTO `Courses` \\(id, description, duration, name, price, price_per_hour, students_counts, type, teacher_id\\) VALUES", "");
+                String clearData = line.replaceAll("INSERT INTO `Courses` VALUES ", "");
                 clearData = clearData.replaceAll(";", "");
-//                parseAndSetCourse(clearData);
+                parseAndSetCourse(clearData);
             }
             if (line.contains("INSERT INTO `PurchaseList`")) {
-                String clearData = line.replaceAll("INSERT INTO `PurchaseList` \\(student_name, course_name, price, subscription_date\\) VALUES ", "");
+                String clearData = line.replaceAll("INSERT INTO `PurchaseList` VALUES ", "");
                 clearData = clearData.replaceAll(";", "");
             }
             if (line.contains("INSERT INTO `Students`")) {
-                String clearData = line.replaceAll("INSERT INTO `Students` \\(id, name, age, registration_date\\) VALUES ", "");
+                String clearData = line.replaceAll("INSERT INTO `Students` VALUES ", "");
                 clearData = clearData.replaceAll(";", "");
                 setStudent(clearData);
             }
             if (line.contains("INSERT INTO `Subscriptions`")) {
-                String clearData = line.replaceAll("INSERT INTO `Subscriptions` \\(student_id, course_id, subscription_date\\) VALUES ", "");
+                String clearData = line.replaceAll("INSERT INTO `Subscriptions` VALUES ", "");
                 clearData = clearData.replaceAll(";", "");
-//                setSubscription(clearData);
+                setSubscription(clearData);
             }
             if (line.contains("INSERT INTO `Teachers`")) {
-                String clearData = line.replaceAll("INSERT INTO `Teachers` \\(id, name, salary, age\\) VALUES ", "");
+                String clearData = line.replaceAll("INSERT INTO `Teachers` VALUES ", "");
                 clearData = clearData.replaceAll(";", "");
-//                setTeacher(clearData);
+                setTeacher(clearData);
             }
         }
+            session.close();
+            HibernateUtil.close();
     }
 
     private static void setStudent(String clearData) throws ParseException {
-        Session session = HibernateUtil.getSessionFactory().openSession();
+
+
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
         String[] fragments = clearData.split("\\),\\(");
         for (String frag : fragments) {
@@ -68,20 +72,14 @@ public class ParsSql {
             session.save(student);
             session.getTransaction().commit();
         }
-        session.close();
-        HibernateUtil.close();
     }
 
     private static void setSubscription(String clearData) throws ParseException {
-        Session session = HibernateUtil.getSessionFactory().openSession();
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
-
-
         String[] fragments = clearData.split("\\),\\(");
         for (String frag : fragments) {
             String data = frag.replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("'", "");
             String[] fields = data.split(",");
-
             session.getTransaction().begin();
             Subscription subscription = new Subscription();
             subscription.setStudentId(Integer.parseInt(fields[0]));
@@ -91,14 +89,10 @@ public class ParsSql {
 
             session.save(subscription);
             session.getTransaction().commit();
-
         }
-        session.close();
-        HibernateUtil.close();
     }
 
     private static void setTeacher(String clearData) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
         String[] fragments = clearData.split("\\),\\(");
         for (String frag : fragments) {
             String data = frag.replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("'", "");
@@ -112,8 +106,7 @@ public class ParsSql {
             session.save(teacher);
             session.getTransaction().commit();
         }
-        session.close();
-        HibernateUtil.close();
+
     }
 
     private static void parseAndSetCourse(String clearData) {
@@ -122,8 +115,6 @@ public class ParsSql {
             String data = frag.replaceAll("\\(", "").replaceAll("\\)", "").replaceAll("'", "");
             String[] fields = data.split(",");
 
-
-            Session session = HibernateUtil.getSessionFactory().openSession();
             session.getTransaction().begin();
             Course course = new Course();
             course.setName(fields[1]);
@@ -136,8 +127,6 @@ public class ParsSql {
             course.setPricePerHour(Float.parseFloat(fields[8]));
             session.save(course);
             session.getTransaction().commit();
-            session.close();
-            HibernateUtil.close();
         }
     }
 }
