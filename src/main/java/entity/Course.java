@@ -18,17 +18,17 @@ public class Course {
     @Enumerated(EnumType.STRING)
     private enums.CourseType type;
 
-    @Column(length = 500, nullable = false)
+    @Column(length = 500, nullable = true)
     private String description;
 
-    @Column(name = "teacher_id", nullable = false)
+    @Column(name = "teacher_id", nullable = true)
     private Integer teacherId;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @MapsId("teacherId")
     private Teacher teacher;
 
-    @Column(name = "students_counts", nullable = false)
+    @Column(name = "students_counts", nullable = true)
     private Integer studentsCount;
 
     private Integer price;
@@ -100,7 +100,7 @@ public class Course {
         return studentsCount;
     }
 
-    public void setStudentsCount(int studentsCount) {
+    public void setStudentsCount(Integer studentsCount) {
         this.studentsCount = studentsCount;
     }
 
